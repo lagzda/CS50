@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <cs50.h>
 #include <string.h>
+
+//A function that builds two pyramids based on height provided
+
 int main(void){
     printf("Please enter the height (0:23): ");
     int height = GetInt();

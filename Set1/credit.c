@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <cs50.h>
 #include <string.h>
+//Function that implements Luhn algorithm for credit cards.
 int main(void)
 {
     string card = "378282246310005";
