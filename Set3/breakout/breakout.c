@@ -47,6 +47,7 @@ void initBricks(GWindow window);
 GOval initBall(GWindow window);
 GRect initPaddle(GWindow window);
 GLabel initScoreboard(GWindow window);
+//Added lives for visual representation
 void initLives(GWindow window, GOval * livesRep ,int count);
 void updateScoreboard(GWindow window, GLabel label, int points);
 GObject detectCollision(GWindow window, GOval ball);
@@ -82,7 +83,6 @@ int main(void)
     GOval livesRep[lives];
     initLives(window, livesRep, lives); 
 
-
     // number of points initially
     int points = 0;
     
@@ -94,12 +94,21 @@ int main(void)
     while (lives > 0 && bricks > 0)
     {   
         if(!paused){
-        move(ball,velocityX,velocityY);
-        pause(2);
+            move(ball,velocityX,velocityY);
+            pause(10);
         }
         // Collisions logic
         GObject object = detectCollision(window,ball);
         if (object == paddle){
+            if (getX(ball)> getX(object)+(getWidth(object)/2)){
+                if (velocityX<0){
+                    velocityX = -velocityX;
+                }
+            } else {
+                if (velocityX>0){
+                    velocityX = -velocityX;
+                }
+            }
             velocityY = -velocityY;
         }
         if (object!=NULL){
@@ -233,6 +242,13 @@ GLabel initScoreboard(GWindow window)
     return label;
 }
 
+/**
+ * Updates lives and it's representation, resets ball to middle and pauses
+ */
+void lostLife(){
+
+}
+ 
 /**
  * Updates scoreboard's label, keeping it centered in window.
  */
