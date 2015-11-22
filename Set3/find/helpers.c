@@ -6,7 +6,7 @@
  *
  * Helper functions for Problem Set 3.
  */
-       
+#include <stdio.h>       
 #include <cs50.h>
 #include "helpers.h"
 
@@ -101,6 +101,50 @@ void bubble(int values[], int n){
         }
     }
 }
+//Merge sort
+void merge(int values[], int min, int mid, int max){
+    int i,j;
+    int lsize = mid - min + 1;
+    int rsize = max - mid;
+    int left[lsize], right[rsize];
+    for (i=0;i<lsize;i++){
+        left[i] = values[min+i];
+    }
+    for (j=0;j<rsize;j++){
+        right[j] = values[mid+j+1];
+    }
+    i=0;
+    j=0;
+    int k = min;
+    while (i<lsize && j<rsize){
+        if (left[i]<=right[j]){
+            values[k] = left[i];
+            i++;
+        } else {
+            values[k] = right[j];
+            j++;
+        }
+        k++; 
+    }
+    while (i < lsize){
+        values[k] = left[i];
+        i++;
+        k++;
+    }
+    while (j < rsize){
+        values[k] = right[j];
+        j++;
+        k++;
+    }   
+}
+void mergeSort(int values[], int min, int max){
+    if (min<max){
+        int mid = (min+max)/2;
+        mergeSort(values, min, mid);
+        mergeSort(values, mid+1, max);
+        merge(values, min, mid, max);
+    }
+}
 
 /**
  * Sorts array of n values.
@@ -108,8 +152,10 @@ void bubble(int values[], int n){
 void sort(int values[], int n)
 {
     //Uncomment either of the sorting algorithms to work
+    
     //selection(values, n);
     //insertion(values, n);
     //bubble(values, n);
+    mergeSort(values,0,n-1);
     return;
 }

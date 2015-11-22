@@ -26,6 +26,7 @@ void bubble(int values[], int n){
         }
     }
 }
+//Test
 int main(int argc, char * argv[]){
     int list[] = {1,8,7,9,2,3,5};
     //One way to calculate size of the array

@@ -47,14 +47,20 @@ void initBricks(GWindow window);
 GOval initBall(GWindow window);
 GRect initPaddle(GWindow window);
 GLabel initScoreboard(GWindow window);
-//Added lives for visual representation
+// Added lives for visual representation
 void initLives(GWindow window, GOval * livesRep ,int count);
 void updateScoreboard(GWindow window, GLabel label, int points);
 GObject detectCollision(GWindow window, GOval ball);
+// GODMODE
+bool godmode = false;
+// paddle shrinking coefficient
+double shrink = 1;
 
-
-int main(void)
+int main(int argc, char * argv[])
 {
+    if (argc == 2 && strcmp(argv[1], "GOD")==0){
+        godmode = true;   
+    }
     // seed pseudorandom number generator
     srand48(time(NULL));
 
@@ -89,13 +95,20 @@ int main(void)
     // velocity
     double velocityX = drand48()*2.0;
     double velocityY = 2.0;
+    
     // keep playing until game over
     bool paused = true;
     while (lives > 0 && bricks > 0)
-    {   
+    {    
         if(!paused){
             move(ball,velocityX,velocityY);
-            pause(10);
+            pause(2);
+        }
+        // If godmode is enabled make paddle follow ball
+        if (godmode) {
+            paused = false;
+            double x = getX(ball) - getWidth(paddle)/2;
+            setLocation(paddle, x, getY(paddle));
         }
         // Collisions logic
         GObject object = detectCollision(window,ball);
@@ -113,6 +126,9 @@ int main(void)
         }
         if (object!=NULL){
             if(strcmp(getType(object),"GRect")==0 && object!=paddle){
+                shrink -= 0.01;
+                // Apply shrink to paddle
+                setSize(paddle, PWIDTH*shrink, PHEIGHT);
                 velocityY = -velocityY;
                 removeGWindow(window,object);
                 points+=1;
@@ -121,7 +137,7 @@ int main(void)
             }
         }
         
-        
+        if (!godmode){
         GEvent event = getNextEvent(MOUSE_EVENT);
         if (event != NULL){
             if (getEventType(event) == MOUSE_MOVED){
@@ -132,29 +148,31 @@ int main(void)
                 paused = false;
             }
         }
-            if (getX(ball)+getWidth(ball)>=getWidth(window)){
-                velocityX = -velocityX;
-            }
-            if (getX(ball)<=0){
-                velocityX = -velocityX;
-            }
-            if (getY(ball)+getHeight(ball)>=getHeight(window)){
-                lives -= 1;
-                removeGWindow(window, livesRep[lives]);
-                removeGWindow(window,ball);
-                ball = initBall(window);
-                if (lives == 0){
-                    setLabel(label,"Game Over");
-                    double x = (getWidth(window) - getWidth(label)) / 2;
-                    double y = (getHeight(window) - getHeight(label)) / 2;
-                    setLocation(label, x, y);
-                    pause(1000);
-                } 
-                else {
-                    velocityX = drand48()*2.0;
-                    paused = true;
-                }   
-            }
+        }
+        
+        if (getX(ball)+getWidth(ball)>=getWidth(window)){
+            velocityX = -velocityX;
+        }
+        if (getX(ball)<=0){
+            velocityX = -velocityX;
+        }
+        if (getY(ball)+getHeight(ball)>=getHeight(window)){
+            lives -= 1;
+            removeGWindow(window, livesRep[lives]);
+            removeGWindow(window,ball);
+            ball = initBall(window);
+            if (lives == 0){
+                setLabel(label,"Game Over");
+                double x = (getWidth(window) - getWidth(label)) / 2;
+                double y = (getHeight(window) - getHeight(label)) / 2;
+                setLocation(label, x, y);
+                pause(1000);
+            } 
+            else {
+                velocityX = drand48()*2.0;
+                paused = true;
+            }   
+        }
             if (getY(ball)<=0){
                 velocityY = -velocityY;
             }
