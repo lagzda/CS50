@@ -57,6 +57,11 @@ GObject detectCollision(GWindow window, GOval ball);
 bool godmode = false;
 // paddle shrinking coefficient
 double shrink = 1;
+// Intantiate laser shot
+GLine shootLaser(GWindow window, GRect paddle);
+// Check if laser is fired
+bool fired = false;
+GLine shot = NULL;
 
 int main(int argc, char * argv[])
 {
@@ -102,9 +107,12 @@ int main(int argc, char * argv[])
     bool paused = true;
     while (lives > 0 && bricks > 0)
     {    
-        if(!paused){
+        if (!paused){
             move(ball,velocityX,velocityY);
-            pause(5);
+            pause(2);
+        }
+        if (fired){
+            move(shot,0,-1);
         }
         // If godmode is enabled make paddle follow ball
         if (godmode) {
@@ -114,20 +122,34 @@ int main(int argc, char * argv[])
         }
         // Collisions logic
         GObject object = detectCollision(window,ball);
-        if (object == paddle){
-            if (getX(ball)> getX(object)+(getWidth(object)/2)){
-                if (velocityX<0){
-                    velocityX = -velocityX;
-                }
-            } else {
-                if (velocityX>0){
-                    velocityX = -velocityX;
+        if (fired){
+            GObject hit = detectCollision(window,shot);
+            if (hit != NULL){
+                if (strcmp(getType(hit),"GRect")==0){
+                    points+=(100-(getY(hit)))/10;
+                    removeGWindow(window,hit);
+                    removeGWindow(window,shot);
+                    fired = false;
+                    bricks-=1;
+                    updateScoreboard(window,label,points);       
                 }
             }
-            velocityY = -velocityY;
         }
+        // Detect ball and paddle collision
         if (object!=NULL){
-            if(strcmp(getType(object),"GRect")==0 && object!=paddle){
+            if (object == paddle){
+                if (getX(ball)> getX(object)+(getWidth(object)/2)){
+                    if (velocityX<0){
+                        velocityX = -velocityX;
+                    }
+                } else {
+                    if (velocityX>0){
+                        velocityX = -velocityX;
+                    }
+                }
+                velocityY = -velocityY;
+            }
+            if(strcmp(getType(object),"GRect")==0 && object!=paddle && object!=shot){
                 shrink -= 0.01;
                 // Apply shrink to paddle
                 setSize(paddle, PWIDTH*shrink, PHEIGHT);
@@ -143,13 +165,20 @@ int main(int argc, char * argv[])
         if (!godmode){
         GEvent event = getNextEvent(MOUSE_EVENT);
         if (event != NULL){
+            // Move paddle
             if (getEventType(event) == MOUSE_MOVED){
                 double x = getX(event) - getWidth(paddle)/2;
                 setLocation(paddle, x, getY(paddle));
             }
+            // Shoot laser
+            if (getEventType(event) == MOUSE_CLICKED && !paused && !fired){
+                shot = shootLaser(window, paddle);
+            }
+            // Start or resume game from paused
             if (getEventType(event) == MOUSE_CLICKED){
                 paused = false;
             }
+            
         }
         }
         
@@ -181,6 +210,7 @@ int main(int argc, char * argv[])
             }
         
     }
+    // If all the bricks are cleared then the player wins
     if(bricks == 0){
         setLabel(label,"You won!");
         double x = (getWidth(window) - getWidth(label)) / 2;
@@ -200,7 +230,6 @@ int main(int argc, char * argv[])
 /**
  * Initializes window with a grid of bricks.
  */
- 
 void initBricks(GWindow window)
 {
     for (int i = 0; i < ROWS; i++){
@@ -236,7 +265,7 @@ GRect initPaddle(GWindow window)
     return paddle;
 }
 /**
- * Instantiates lives in left bottom corner.
+ * Instantiates lives representation in left bottom corner.
  */
 void initLives(GWindow window, GOval * livesRep ,int count){
     for (int i = 0; i < count; i++){
@@ -258,15 +287,22 @@ GLabel initScoreboard(GWindow window)
     double y = (getHeight(window)-getHeight(label))/2;
     setLocation(label,x,y);
     add(window,label);
-    
     return label;
 }
-
 /**
- * Updates lives and it's representation, resets ball to middle and pauses
+ * Instantiates laser
  */
-void lostLife(){
-
+GRect shootLaser(GWindow window, GRect paddle){
+    int lw = 2;
+    int lh = 10;
+    double posx = getX(paddle) + (getWidth(paddle)) / 2.0 + lw / 2.0;
+    double posy = getY(paddle) - lh - 10;
+    GLine shot = newGLine(posx, posy, posx, posy-10); 
+    setFilled(shot, true);
+    setColor(shot,"GREEN");
+    add(window,shot);
+    fired = true;
+    return shot; 
 }
  
 /**

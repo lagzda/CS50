@@ -5,8 +5,8 @@
 #include <math.h>
 #include <string.h>
 
-void generate(int pos, char word[8], char * asci, char * salt, char * pass){
-    if(pos>7){
+void generate(int pos, char word[9], char * asci, char * salt, char * pass){
+    if(pos>9){
         return;
     }
     for (int i=0;i<95;i++){
@@ -25,7 +25,7 @@ void generate(int pos, char word[8], char * asci, char * salt, char * pass){
 int main(int argc, char * argv[]){
     if (argc == 2){
         char * asci =  " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}";
-        char word[8];
+        char word[9];
         generate(0,word, asci, "50", argv[1]);
         return 0;
     } else {
