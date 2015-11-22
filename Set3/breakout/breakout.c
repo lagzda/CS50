@@ -47,6 +47,8 @@ void initBricks(GWindow window);
 GOval initBall(GWindow window);
 GRect initPaddle(GWindow window);
 GLabel initScoreboard(GWindow window);
+// Colors for bricks
+char * colors[] = {"BLUE","RED","ORANGE","YELLOW","GREEN"};
 // Added lives for visual representation
 void initLives(GWindow window, GOval * livesRep ,int count);
 void updateScoreboard(GWindow window, GLabel label, int points);
@@ -102,7 +104,7 @@ int main(int argc, char * argv[])
     {    
         if(!paused){
             move(ball,velocityX,velocityY);
-            pause(2);
+            pause(5);
         }
         // If godmode is enabled make paddle follow ball
         if (godmode) {
@@ -130,8 +132,9 @@ int main(int argc, char * argv[])
                 // Apply shrink to paddle
                 setSize(paddle, PWIDTH*shrink, PHEIGHT);
                 velocityY = -velocityY;
+                //Scoring 1:3:5:7:9 from lowest to highest
+                points+=(100-(getY(object)))/10;
                 removeGWindow(window,object);
-                points+=1;
                 bricks-=1;
                 updateScoreboard(window,label,points);   
             }
@@ -200,7 +203,6 @@ int main(int argc, char * argv[])
  
 void initBricks(GWindow window)
 {
-    char * colors[] = {"BLUE","RED","ORANGE","YELLOW","GREEN"};
     for (int i = 0; i < ROWS; i++){
         for (int j = 0; j < COLS; j++){
             GRect brick = newGRect(j*BWIDTH+(10*(j+1)), i*BHEIGHT+(10*(i+1)), BWIDTH, BHEIGHT);
