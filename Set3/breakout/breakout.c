@@ -47,24 +47,32 @@ void initBricks(GWindow window);
 GOval initBall(GWindow window);
 GRect initPaddle(GWindow window);
 GLabel initScoreboard(GWindow window);
-// Colors for bricks
+
+// colors for bricks
 char * colors[] = {"BLUE","RED","ORANGE","YELLOW","GREEN"};
-// Added lives for visual representation
+
+// added lives for visual representation
 void initLives(GWindow window, GOval * livesRep ,int count);
+
 void updateScoreboard(GWindow window, GLabel label, int points);
 GObject detectCollision(GWindow window, GOval ball);
+
 // GODMODE
 bool godmode = false;
+
 // paddle shrinking coefficient
 double shrink = 1;
-// Intantiate laser shot
+
+// instantiate laser shot
 GLine shootLaser(GWindow window, GRect paddle);
-// Check if laser is fired
+
+// initiate fired laser shot to false 
 bool fired = false;
 GLine shot = NULL;
 
 int main(int argc, char * argv[])
 {
+    // check if user inputed godmode
     if (argc == 2 && strcmp(argv[1], "GOD")==0){
         godmode = true;   
     }
@@ -106,22 +114,24 @@ int main(int argc, char * argv[])
     // keep playing until game over
     bool paused = true;
     while (lives > 0 && bricks > 0)
-    {    
+    {   
+        // if game not paused move the ball around 
         if (!paused){
             move(ball,velocityX,velocityY);
             pause(2);
         }
+        // if laser shot is fired move the shot toward ball
         if (fired){
             move(shot,0,-1);
         }
-        // If godmode is enabled make paddle follow ball
+        // if godmode is enabled make paddle follow ball
         if (godmode) {
             paused = false;
             double x = getX(ball) - getWidth(paddle)/2;
             setLocation(paddle, x, getY(paddle));
         }
-        // Collisions logic
-        GObject object = detectCollision(window,ball);
+        // collisions logic
+        // detect lasershot and brick collision 
         if (fired){
             GObject hit = detectCollision(window,shot);
             if (hit != NULL){
@@ -135,7 +145,8 @@ int main(int argc, char * argv[])
                 }
             }
         }
-        // Detect ball and paddle collision
+        // detect ball and paddle collision
+        GObject object = detectCollision(window,ball);
         if (object!=NULL){
             if (object == paddle){
                 if (getX(ball)> getX(object)+(getWidth(object)/2)){

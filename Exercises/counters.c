@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+// Integer only counter
 void intcount(int * first){
     int count = 0;
     while (*first != '\0'){
@@ -8,6 +8,7 @@ void intcount(int * first){
     }
     printf("%i ints \n", count);
 }
+// Char only counter
 void charcount(char * first){
     int count = 0;
     while (*first != '\0'){
