@@ -1,13 +1,27 @@
-0.  TODO
-1.  TODO
-2.  TODO
-3.  TODO
-4.  TODO
-5.  TODO
-6.  TODO
-7.  TODO
-8.  TODO
-9.  TODO
+0.  JPEG: 24 bit color palette = ~16.7 million colors
+    PNG: 24 bit color palette = ~16.7 million colors
+    GIF: 8 bit color palette = 256 colors
+    BMP: 32 bit color palette = ~4.3 billion colors 
+1.  Animation is supported by GIF file format
+2.  Lossless compression is the compression of a file where all data is recoverable
+    when uncompressed.Lossy compression on the other hand permanently erases certain 
+    information of the file.
+3.  JPEG is lossy compressed.
+4.  On FAT (File Allocation Table) a file deletion means deleting the address of the file
+    instead of the actual file.
+5.  I would delete files by replacing each bit in the disk by a 0 bit.
+6.  The stdint.h is a header file that declares sets of integer types with fixed
+    width (size in bits) and defines their corresponding macros (functions).
+7.  On different machines an INT, CHAR, SHORT... can represent different bit sizes. 
+    int[n]_t and uint[n]_t are constant size INTs regardless of the machine. It is
+    an alias for whatever INT type a specific system considers of size n.
+8.  BYTE = 1 byte, 
+    WORD = 2 bytes, 
+    DWORD = 4 bytes, 
+    LONG = signed 4 bytes.
+9.  ASCI = BM,
+    HEX = 0x42 0x4D
+    DEC = 66 77
 10. TODO
 11. TODO
 12. TODO
