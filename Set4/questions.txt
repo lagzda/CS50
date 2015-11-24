@@ -32,7 +32,7 @@
 14. The third argument of fread is called nmemb and it specifies how many elements
     the program should attemp to read. If it reaches EOF before the specified
     bytes are read it simply returns 0. So in copy.c it is used to make sure that 
-    the element is read exactly the specified size.
+    the element with the exactly specified size is read.
 15. biWidth indicates how many pixels wide is the image. Since a scanline must
     be a multiple of 4 the following function calculates the padding needed.
     int padding =  (4 - (bi.biWidth * sizeof(RGBTRIPLE)) % 4) % 4;
