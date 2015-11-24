@@ -20,14 +20,31 @@
     DWORD = 4 bytes, 
     LONG = signed 4 bytes.
 9.  ASCI = BM,
-    HEX = 0x42 0x4D
-    DEC = 66 77
-10. TODO
-11. TODO
-12. TODO
-13. TODO
-14. TODO
-15. TODO
-16. TODO
-17. TODO
+    HEX = 0x42 0x4D,
+    DEC = 66 77.
+10. BfSize is the size of the whole file
+    BiSize is the size of the struct BITMAPINFOHEADER
+11. A negative BiHeight means that the image file is top-down instead of bottom-up
+12. Color depth is just how many bits for color a pixel has and it is represented
+    by biBitCount
+13. fopen write might return NULL if there is not enough memory to allocate for a file 
+    or there is not a permission to create the file.
+14. The third argument of fread is called nmemb and it specifies how many elements
+    the program should attemp to read. If it reaches EOF before the specified
+    bytes are read it simply returns 0. So in copy.c it is used to make sure that 
+    the element is read exactly the specified size.
+15. biWidth indicates how many pixels wide is the image. Since a scanline must
+    be a multiple of 4 the following function calculates the padding needed.
+    int padding =  (4 - (bi.biWidth * sizeof(RGBTRIPLE)) % 4) % 4;
+    (4 - (3 * 3) % 4) % 4;
+    (4 - 9 % 4) % 4;
+    (4 - 1) % 4;
+    3 % 4 = 3;
+    The padding needs to be 3 bytes if biWidth = 3.
+16. fseek sets the file stream pointer called stream to the specified offset.
+    The function has three arguments. The first is the pointer that we will move 
+    to the offset, the second is the offset itself, and the third is the location
+    from which the offset needs to be measured. 
+17. SEEK_CUR indicates the current file pointer position. It is used for example
+    if I want to move by some offset from the current position in my file.
 18. TODO
