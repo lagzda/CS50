@@ -27,10 +27,12 @@ int main(int argc, char * argv[]){
         return 3;
     }
     //Define file and info headers for the bitmap
-    BITMAPFILEHEADER bf;
+    BITMAPFILEHEADER bf, bf_new;
     fread(&bf, sizeof(BITMAPFILEHEADER), 1, inptr);
-    BITMAPINFOHEADER bi;
+    bf_new = bf;
+    BITMAPINFOHEADER bi, bi_new;
     fread(&bi, sizeof(BITMAPINFOHEADER), 1, inptr);
+    bi_new = bi;
     //Check if infile is likely 24-bit uncommpresed BMP.
     if (bf.bfType != 0x4d42 || bf.bfOffBits != 54 || bi.biSize != 40 ||
     bi.biBitCount != 24 || bi.biCompression != 0){
@@ -39,24 +41,25 @@ int main(int argc, char * argv[]){
         printf("Unsupported file format");
         return 4;
     }
-    //Modify headers by the factor given
-    bf.bfSize = (bf.bfSize-54)*factor*factor+54;
-    bi.biWidth *= factor;
-    bi.biHeight *= factor;
-    bi.biSizeImage *= factor*factor;
-    //Write the output file's headers
-    fwrite(&bf, sizeof(BITMAPFILEHEADER), 1, outptr);
-    fwrite(&bi, sizeof(BITMAPINFOHEADER), 1, outptr);
+    //Modify width and height in BITMAPINFOHEADER by the factor given
+    bi_new.biWidth *= factor;
+    bi_new.biHeight *= factor;
     //Determine padding before
-    int paddingb = (4 - ((bi.biWidth/factor) * sizeof(RGBTRIPLE)) % 4) % 4;
+    int paddingb = (4 - (bi.biWidth * sizeof(RGBTRIPLE)) % 4) % 4;
     //Determine padding after
-    int paddinga = (4 - (bi.biWidth * sizeof(RGBTRIPLE)) % 4) % 4;
+    int paddinga = (4 - (bi_new.biWidth * sizeof(RGBTRIPLE)) % 4) % 4;
+    //Modify image and file size information
+    bi_new.biSizeImage = (bi_new.biWidth * sizeof(RGBTRIPLE) + paddinga) * abs(bi_new.biHeight);
+    bf_new.bfSize = bf.bfSize - bi.biSizeImage + bi_new.biSizeImage;
+    //Write the output file's headers
+    fwrite(&bf_new, sizeof(BITMAPFILEHEADER), 1, outptr);
+    fwrite(&bi_new, sizeof(BITMAPINFOHEADER), 1, outptr);
     //Iterate over scanlines original times because we will multiply lines as we add them
-    for (int i = 0, biHeight = abs(bi.biHeight)/factor; i < biHeight;i++){
+    for (int i = 0, biHeight = abs(bi.biHeight); i < biHeight;i++){
         //Write scanline factor times
         for (int z = 0; z < factor; z++){
         //Iterate over each pixel original times because we will multiply pixels as we add them
-            for (int j = 0, biWidth = bi.biWidth / factor; j < biWidth; j++){
+            for (int j = 0, biWidth = bi.biWidth; j < biWidth; j++){
                 //Temporary storage
                 RGBTRIPLE triple;
                 //Read the triple from input file
@@ -68,7 +71,7 @@ int main(int argc, char * argv[]){
             }
             //Seek/skip back to scanline if it's the last multiplied scanline
             if (z < factor - 1){
-                fseek(inptr, -sizeof(RGBTRIPLE) * (bi.biWidth / factor), SEEK_CUR);
+                fseek(inptr, -sizeof(RGBTRIPLE) * bi.biWidth, SEEK_CUR);
             }
             //Add the padding to output file
             for (int l = 0; l < paddinga; l++){

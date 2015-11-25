@@ -39,11 +39,6 @@ int main(int argc, char * argv[]){
             triple.rgbtRed = 0x60;
             triple.rgbtGreen = 0x60;
             triple.rgbtBlue = 0x60;
-            if(j>0){
-                triple.rgbtRed = 0x61;
-                triple.rgbtGreen = 0x61;
-                triple.rgbtBlue = 0x61;   
-            }
             fwrite(&triple, sizeof(RGBTRIPLE), 1, outptr);
         }
         //Write padding to the output file
