@@ -3,8 +3,9 @@
  *
  * Computer Science 50
  * Problem Set 4
- *
- * Copies a BMP piece by piece, just because.
+ * 
+ * Builds upon the copy.c file
+ * Overwrites some color bits to reveal Mr. Body's killer
  */
        
 #include <stdio.h>
@@ -77,16 +78,18 @@ int main(int argc, char* argv[])
         {
             // temporary storage
             RGBTRIPLE triple;
-
+            
             // read RGB triple from infile
             fread(&triple, sizeof(RGBTRIPLE), 1, inptr);
             
             // change the red pixels to white
-            if (triple.rgbtRed == 0xff && triple.rgbtBlue == 0x00 && triple.rgbtGreen  == 0x00){
-                triple.rgbtRed = 0xff;
+            if (triple.rgbtRed == 0xff){
                 triple.rgbtBlue = 0xff;
                 triple.rgbtGreen = 0xff;   
             }
+            
+            
+            
             
             // write RGB triple to outfile
             fwrite(&triple, sizeof(RGBTRIPLE), 1, outptr);

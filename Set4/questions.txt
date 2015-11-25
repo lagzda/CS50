@@ -47,4 +47,4 @@
     from which the offset needs to be measured. 
 17. SEEK_CUR indicates the current file pointer position. It is used for example
     if I want to move by some offset from the current position in my file.
-18. TODO
+18. It looks like Rob Bowden holding a cat.
