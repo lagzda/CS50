@@ -13,6 +13,11 @@ int main(int argc, char * argv[]){
     char * infile = argv[2];
     char * outfile = argv[3];
     int factor = atoi(argv[1]);
+    //Make sure that the factor is in range
+    if (factor < 0 || factor > 100){
+        printf("Supported range for the factor [1,100]\n");
+        return 5;
+    }
     //Open readable file and check for NULL
     FILE * inptr = fopen(infile, "r");
     if (inptr == NULL){
