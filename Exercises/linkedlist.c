@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <cs50.h>
 
 //A singly linked list implementation (ordered as elements are inserted)
 
@@ -14,17 +16,40 @@ typedef struct node{
 void traverse(node * head);
 void populate(node * head);
 void clean(node * head);
-void insert(int value, node * head);
+void insert(node * head);
 
-int main(){
+int main(void){
     //Inititate the head of the list which will be the primary point of reference.
     node * head;
     //Allocate some memory for head.
-    head = malloc(sizeof(node)); 
-    populate(head);
-    insert(1,head);
-    traverse(head);
+    head = malloc(sizeof(node));
+    //A simple number selection interface
+    int selection = 0;
+    while(selection != 4){
+        printf("1. Populate list with default values\n");
+        printf("2. Insert a value in the list\n");
+        printf("3. Traverse the list\n");
+        printf("4. Quit\n");
+        printf("Selection: ");
+        selection = GetInt();
+        switch (selection){
+            case 1:
+                populate(head);
+                break;
+            case 2:
+                insert(head);
+                break;
+            case 3:
+                traverse(head);
+                break;
+            case 4:
+                break;    
+            default:
+                printf("Try again");         
+        }
+    }
     clean(head);
+    
     return 0;
 }
 //Insert 3,5,7,9 in to the linked list
@@ -45,7 +70,7 @@ void populate(node * head){
             //Set the current node's next reference to the new node
             ptr->next = new;
             //Make the "crawler" point to the new node
-            ptr = ptr->next;
+            ptr = ptr->next;  
         }
     }
 }
@@ -62,12 +87,14 @@ void traverse(node * head){
         //Print the current value
         printf("%i ", ptr->value);
         //Set the "crawler" to the next node
-        ptr = ptr->next;   
+        ptr = ptr->next;  
     }
     printf("\n");
     }
 }
-void insert(int value, node * head){
+void insert(node * head){
+    printf("Please enter a value to insert: ");
+    int value = GetInt();
     //Initiate "crawler" to point to head
     node * ptr = head;
     //If the value we want to add is the smallest value
@@ -80,16 +107,49 @@ void insert(int value, node * head){
         ptr->value = value;
         ptr->next = new; 
     }
+    //If the node needs to be inserted somewhere in the middle or at the end of list
     else{
-    //Not yet implemented    
+        //The while loop will insert the node in the middle if required
+        //If that does not succeed then after the while loop we insert the node as last
+        bool inserted = false;
+        while(ptr->next != NULL){
+            //The insertion happens between the current and the next node
+            if (value < ptr->next->value && value >= ptr->value){
+                //Initiate a new node and set it's values.
+                node * new = malloc(sizeof(node));
+                new->value = value;
+                //New node needs to point where the current node pointed
+                new->next = ptr->next;
+                //And the current node needs to point to the new node
+                ptr->next = new;
+                //The bool is so the program doesn't try to append another node in the end of list
+                inserted = true;
+                break; 
+            }
+            //Go to next node
+            ptr = ptr->next;
+        }
+        //If insertion in middle did not succeed, lets insert the node in the end
+        if (!inserted){
+            //Create new node
+            node * new = malloc(sizeof(node));
+            new->value = value;
+            //Ground the node
+            new->next = NULL;
+            //And set the current node point to the new one
+            ptr->next = new;
+        }    
     }    
 }
+//A function to free up allocated memory from heap
 void clean(node * head){
     if (head == NULL){
-        printf("Cleaned up! \n");
+        printf("Cleaned up! \n"); //Kind of
     }
+    //Set "crawler" to point to the head of the list 
     node * ptr = head;
     while (ptr != NULL){
+        //Store the current node to know where to go next after freeing the it
         node * prev = ptr;
         ptr = ptr->next;
         free(prev);
