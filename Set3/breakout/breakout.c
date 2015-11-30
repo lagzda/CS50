@@ -120,7 +120,7 @@ int main(int argc, char * argv[])
             move(ball,velocityX,velocityY);
             pause(2);
         }
-        // if laser shot is fired move the shot toward ball
+        // if laser shot is fired move the shot toward bricks
         if (fired){
             move(shot,0,-1);
         }
@@ -139,6 +139,8 @@ int main(int argc, char * argv[])
                     points+=(100-(getY(hit)))/10;
                     removeGWindow(window,hit);
                     removeGWindow(window,shot);
+                    freeGObject(hit);
+                    freeGObject(shot);
                     fired = false;
                     bricks-=1;
                     updateScoreboard(window,label,points);       
@@ -168,6 +170,7 @@ int main(int argc, char * argv[])
                 //Scoring 1:3:5:7:9 from lowest to highest
                 points+=(100-(getY(object)))/10;
                 removeGWindow(window,object);
+                freeGObject(object);
                 bricks-=1;
                 updateScoreboard(window,label,points);   
             }
