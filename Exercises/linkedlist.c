@@ -22,13 +22,15 @@ int main(void){
     //Inititate the head of the list which will be the primary point of reference.
     node * head;
     //Allocate some memory for head.
+    //I am not going to store any value for the head
+    //It will be only used to point at the beginning of list which will be the next element
     head = malloc(sizeof(node));
     //Check for null
     if (head == NULL){
         printf("Something went wrong\n");
         return 1;
     }
-    head->next=NULL;
+    head->next = NULL;
     //A simple number selection interface
     int selection = 0;
     while(selection != 4){
@@ -55,14 +57,19 @@ int main(void){
         }
     }
     clean(head);
+    free(head);
     
     return 0;
 }
 //Insert 3,5,7,9 in to the linked list
 void populate(node * head){
+    clean(head);
     printf("The default list is 3->5->7->9\n");
     //Set a "crawler" to point to head
     node * ptr = head;
+    node * new = malloc(sizeof(node));
+    ptr->next = new;
+    ptr = ptr->next;
     //Iteratively insert each value
     for (int i = 3; i < 10; i += 2){
         ptr->value = i;
@@ -88,12 +95,12 @@ void populate(node * head){
     }
 }
 void traverse(node * head){
-    if (head == NULL){
+    if (head->next == NULL){
         printf("The list is empty\n");
     }
     else{
-    //Initiate the "crawler" pointing to the first node (head)
-    node * ptr = head;
+    //Initiate the "crawler" pointing to the first node after head
+    node * ptr = head->next;
     printf("The list is: \n");
     //If the "crawler" becomes NULL it means that it is end of the list
     while (ptr != NULL){
@@ -108,74 +115,90 @@ void traverse(node * head){
 void insert(node * head){
     printf("Please enter a value to insert: ");
     int value = GetInt();
-    //Initiate "crawler" to point to head
-    node * ptr = head;
-    //If the value we want to add is the smallest value
-    if (value < ptr->value){
-        //Initiate a new node and set it's values exactly like head's.
-        node * new = malloc(sizeof(node));
-        //Check for null
-        if (new != NULL){
-            new->value = ptr->value;
-            //It is best practice to initiate the node pointing to NULL
-            new->next = NULL;
-            new->next = ptr->next;
-            //Now change the current head's value to the new and point it to the past head.
-            ptr->value = value;
-            ptr->next = new;
-        }
-        else{
-            printf("Something went wrong");
-        } 
-    }
-    //If the node needs to be inserted somewhere in the middle or at the end of list
-    else{
-        //The while loop will insert the node in the middle if required
-        //If that does not succeed then after the while loop we insert the node as last
-        bool inserted = false;
-        while(ptr->next != NULL){
-            //The insertion happens between the current and the next node
-            if (value < ptr->next->value && value >= ptr->value){
-                //Initiate a new node and set it's values.
-                node * new = malloc(sizeof(node));
-                //Check for NULL 
-                if ()
-                new->value = value;
-                //New node needs to point where the current node pointed
-                new->next = ptr->next;
-                //And the current node needs to point to the new node
-                ptr->next = new;
-                //The bool is so the program doesn't try to append another node in the end of list
-                inserted = true;
-                break; 
-            }
-            //Go to next node
-            ptr = ptr->next;
-        }
-        //If insertion in middle did not succeed, lets insert the node in the end
-        if (!inserted){
-            //Create new node
+    if (head->next != NULL){
+        //Initiate "crawler" to point to first element after head
+        node * ptr = head->next;
+        //If the value we want to add is the smallest value
+        if (value < ptr->value){
+            //Initiate a new node and set it's values exactly like first element's.
             node * new = malloc(sizeof(node));
-            new->value = value;
-            //Ground the node
-            new->next = NULL;
-            //And set the current node point to the new one
-            ptr->next = new;
-        }    
-    }    
+            //Check for null
+            if (new != NULL){
+                new->value = ptr->value;
+                //It is best practice to initiate the node pointing to NULL
+                new->next = NULL;
+                new->next = ptr->next;
+                //Now change the current first's value to the new and point it to the past first.
+                ptr->value = value;
+                ptr->next = new;
+            }
+            else{
+                printf("Something went wrong");
+            } 
+        }
+        //If the node needs to be inserted somewhere in the middle or at the end of list
+        else{
+            //The while loop will insert the node in the middle if required
+            //If that does not succeed then after the while loop we insert the node as last
+            bool inserted = false;
+            while(ptr->next != NULL){
+                //The insertion happens between the current and the next node
+                if (value < ptr->next->value && value >= ptr->value){
+                    //Initiate a new node and set it's values.
+                    node * new = malloc(sizeof(node));
+                    //Check for NULL 
+                    if (new != NULL){
+                        new->value = value;
+                        //New node needs to point where the current node pointed
+                        new->next = ptr->next;
+                        //And the current node needs to point to the new node
+                        ptr->next = new;
+                        //The bool is so the program doesn't try to append another node in the end of list
+                        inserted = true;
+                        break;
+                    }
+                    else{
+                        printf("Something went wrong\n");
+                    }
+                }
+                //Go to next node
+                ptr = ptr->next;
+            }
+            //If insertion in middle did not succeed, lets insert the node in the end
+            if (!inserted){
+                //Create new node
+                node * new = malloc(sizeof(node));
+                new->value = value;
+                //Ground the node
+                new->next = NULL;
+                //And set the current node point to the new one
+                ptr->next = new;
+            }    
+        }
+    }
+    else {
+        //Create new node
+        node * new = malloc(sizeof(node));
+        new->value = value;
+        //Ground the node
+        new->next = NULL;
+        head->next = new;
+    }        
 }
 //A function to free up allocated memory from heap
 void clean(node * head){
-    if (head == NULL){
-        printf("Cleaned up! \n"); //Kind of
+    if (head->next == NULL){
+        printf("Cleaned up! \n");
     }
-    //Set "crawler" to point to the head of the list 
-    node * ptr = head;
-    while (ptr != NULL){
-        //Store the current node to know where to go next after freeing it
-        node * prev = ptr;
-        ptr = ptr->next;
-        free(prev);
+    else{
+        //Set "crawler" to point to the head of the list 
+        node * ptr = head->next;
+        while (ptr != NULL){
+            //Store the current node to know where to go next after freeing it
+            node * prev = ptr;
+            ptr = ptr->next;
+            free(prev);
+        }
+        printf("Cleaned up! \n");
     }
-    printf("Cleaned up! \n");
 }
