@@ -1,0 +1,21 @@
+0.  It is the longest english word and means a lung disease caused by inhaling very fine ash and sand dust.
+1.  getrusage() returns usage measures for either the calling process, children of calling process or the calling thread.
+2.  In the struct rusage there are 16 members.
+3.  The getrusage expects a pointer to be passed in and using pointers is also more efficient.  
+4.  The for loop reads every character of the input.
+    Then it checks if the character is alhabetical or if it is an apostrophe somewhere other than the start of the word
+    If it is it appends the character to the word variable at the index position and increments index.
+    It also checks if the word doesn't exceed the maximum length of the word which is 45 and discards it if it does.
+    If a number is found in a word discard the word as well.
+    Discarding it means to set the index back to zero and move the pointer in the input to EOF
+    If the character is not alphanumerical we have found the end of the word.
+    EOF is added for the word, word count is incremented, and spell check is performed along with function benchmarking.
+    When done index is set to 0 to prepare for the new word.
+5.  By using fgetc instead of fscanf we can examine each character more effectively as well as keep count of characters
+    as to not cause segmentation errors when reading words longer than the maximum size allowed for word.
+6.  Const type is used because it points to a datatype that is not modifiable as in this case check and load functions
+    only need to read the data not rewrite or write to it.
+7.  TODO
+8.  TODO
+9.  TODO
+10. TODO
